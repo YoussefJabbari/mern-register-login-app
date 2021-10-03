@@ -11,7 +11,7 @@ export const registerAction = (user) => {
             })
             .catch(error => {
                 console.error(error);
-                dispatch({ type: REGISTER_ERROR, payload: {} });
+                dispatch({ type: REGISTER_ERROR, payload: error.response.data });
             });
     };
 };

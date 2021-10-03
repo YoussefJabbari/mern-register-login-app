@@ -7,7 +7,7 @@ import Chip from '@mui/material/Chip';
 import './Register.css';
 import { confirmRegisterAction } from '../../redux/actions';
 
-function RegistrationConfirmed(props) {
+const RegistrationConfirmed = (props) => {
     const { confirmRegistrationState, confirmRegistration } = props;
     const { id } = useParams();
 

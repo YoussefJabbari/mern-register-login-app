@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import {CONFIRM_REGISTER_SUCCESS, CONFIRM_REGISTER_ERROR } from '../../types';
+import { CONFIRM_REGISTER_SUCCESS, CONFIRM_REGISTER_ERROR } from '../../types';
 
 export const confirmRegisterAction = (user) => {
     return async (dispatch) => {

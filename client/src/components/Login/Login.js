@@ -4,20 +4,33 @@ import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import { connect } from 'react-redux';
 import { useState } from 'react';
+import { Redirect } from 'react-router';
+import Alert from '@mui/material/Alert';
 
 import './Login.css';
 import { loginAction } from '../../redux/actions';
 
-function Login(props) {
+const Login = (props) => {
     const { loginState, login } = props;
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    if (localStorage.getItem('jwtToken') && loginState.isAuthenticated) {
+        return <Redirect to="/" />;
+    }
+
     return (
         <div className="Login">
             <h2>Register and Login app</h2>
             <h3>Connect to your space</h3>
+
+            {loginState.errorMessage &&
+            <Alert severity="error">
+                {loginState.errorMessage}
+            </Alert>
+            }
+
             <TextField
                 className="TextField"
                 label="E-mail"

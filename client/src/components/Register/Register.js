@@ -4,11 +4,13 @@ import Link from '@mui/material/Link';
 import { Link as RouterLink } from 'react-router-dom';
 import { useState } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
+import Alert from '@mui/material/Alert';
 
 import './Register.css';
 import { registerAction } from '../../redux/actions';
 
-function Register(props) {
+const Register = (props) => {
     const { registerState, register } = props;
 
     const [firstName, setFirstName] = useState('');
@@ -17,10 +19,27 @@ function Register(props) {
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
+    if (localStorage.getItem('jwtToken')) {
+        return <Redirect to="/" />;
+    }
+
     return (
         <div className="Register">
             <h2>Register and Login app</h2>
             <h3>Create your own account</h3>
+
+            { registerState.errorMessage &&
+            <Alert severity="error">
+                { registerState.errorMessage }
+            </Alert>
+            }
+
+            { registerState.userRegistered &&
+            <Alert severity="success">
+                User registered! An email has been sent for confirmation!
+            </Alert>
+            }
+
             <TextField
                 className="TextField"
                 label="First name"
