@@ -13,11 +13,16 @@ const UserSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
         required: true
+    },
+    registerDate: {
+        type: Date,
+        default: Date.now
     },
     enabled: {
         type: Boolean,

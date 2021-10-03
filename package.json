@@ -19,14 +19,13 @@
   "homepage": "https://gitlab.com/JabbariYoussef/register-login-app#readme",
   "dependencies": {
     "bcryptjs": "*",
-    "body-parser": "*",
-    "cors": "*",
     "concurrently": "^6.3.0",
+    "cors": "*",
     "express": "^4.17.1",
-    "mongoose": "^6.0.8",
-    "nodemon": "^2.0.13",
     "jsonwebtoken": "*",
+    "mongoose": "^6.0.8",
     "nodemailer": "^6.6.5",
+    "nodemon": "^2.0.13",
     "passport": "*",
     "passport-jwt": "*"
   }

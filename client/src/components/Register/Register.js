@@ -19,7 +19,8 @@ function Register(props) {
 
     return (
         <div className="Register">
-            <h1>Register and Login App</h1>
+            <h2>Register and Login app</h2>
+            <h3>Create your own account</h3>
             <TextField
                 className="TextField"
                 label="First name"
@@ -79,7 +80,8 @@ function Register(props) {
                         password: password,
                         passwordConfirmation: passwordConfirmation
                     })
-                }}>
+                }}
+            >
                 Register
             </Button><br />
             <div>

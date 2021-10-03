@@ -1,6 +1,6 @@
 import { REGISTER_SUCCESS, REGISTER_ERROR } from '../../types';
 
-const registerState = {
+const initialState = {
     user: {
         firstName: '',
         lastName: '',
@@ -10,10 +10,9 @@ const registerState = {
     }
 };
 
-const registerReducer = (state = registerState, action) => {
+const registerReducer = (state = initialState, action) => {
     switch (action.type) {
         case REGISTER_SUCCESS:
-            console.log('registerReducer', action.payload);
             return action.payload;
         case REGISTER_ERROR:
             return state;
