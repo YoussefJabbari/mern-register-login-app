@@ -1,18 +1,30 @@
 const nodemailer  = require('nodemailer');
+const jwt  = require('jsonwebtoken');
+const bcrypt  = require('bcryptjs');
 
 const User = require('../models/user');
+const keys = require('../config/keys');
 
 // Register request
-exports.registerRequest = (req, res) => {
+exports.register = (req, res) => {
+    const { firstName, lastName, email, password } = req.body;
+
+    // Validation
+    if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({ success: false, msg: 'REQUIRED_FIELDS' });
+    }
+
     User.getUserByEmail(req.body.email, (err, user) => {
         if (user) {
+            // Check user's existence
             return res.status(400).json({ success: false, msg: 'ACCOUNT_ALREADY_REGISTERED' });
         } else {
+            // Create new user
             let newUser = new User({
-                email: req.body.email,
-                password: req.body.password,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password
             });
 
             User.addUser(newUser, (err, user) => {
@@ -35,13 +47,62 @@ exports.registerRequest = (req, res) => {
 exports.confirmRegistration = (req, res) => {
     User.findByIdAndUpdate(req.body.id, {enabled: true}, function(err, result) {
         if (err) {
+            // User not found
             res.send(err)
         } else {
+            // Activating user
             res.send(result)
         }
     });
 };
 
+// Login request
+exports.login = (req, res) => {
+    const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+        return res.status(400).json({ success: false, msg: 'REQUIRED_FIELDS' });
+    }
+
+    User.getUserByEmail(req.body.email, (err, user) => {
+        if (!user) {
+            // Check user's existence
+            return res.status(400).json({ success: false, msg: 'NOT_FOUND_ACCOUNT' });
+        } else {
+            // Check password
+            bcrypt.compare(password, user.password).then(isMatch => {
+                if (isMatch) {
+                    // Create jwt Payload
+                    const jwtPayload = {
+                        id: user.id,
+                        name: user.firstName + ' ' + user.lastName
+                    };
+
+                    // Sign token
+                    jwt.sign(
+                        jwtPayload,
+                        keys.secret,
+                        {
+                            expiresIn: 31556926
+                        },
+                        (err, token) => {
+                            res.json({
+                                success: true,
+                                token: 'Bearer ' + token
+                            });
+                        }
+                    );
+                } else {
+                    // Wrong password
+                    return res.status(400).json({ success: false, msg: 'WRONG_PASSWORD' });
+                }
+            });
+        }
+    });
+};
+
+// Sending email to the user for confirmation
 const sendRegisterRequestMail = (email, id) => {
     let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',

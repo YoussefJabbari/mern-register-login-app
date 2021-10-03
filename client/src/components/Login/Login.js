@@ -1,14 +1,23 @@
-import './Login.css';
 import TextField from '@mui/material/TextField';
-import Chip from '@mui/material/Chip';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
-import Button from "@mui/material/Button";
+import Button from '@mui/material/Button';
+import { connect } from 'react-redux';
+import { useState } from 'react';
 
-function Login() {
+import './Login.css';
+import { loginAction } from '../../redux/actions';
+
+function Login(props) {
+    const { loginState, login } = props;
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
     return (
         <div className="Login">
-            <h1>Register and Login app</h1>
+            <h2>Register and Login app</h2>
+            <h3>Connect to your space</h3>
             <TextField
                 className="TextField"
                 label="E-mail"
@@ -16,6 +25,8 @@ function Login() {
                 required
                 size="small"
                 variant="standard"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
                 className="TextField"
@@ -24,24 +35,42 @@ function Login() {
                 required
                 size="small"
                 variant="standard"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
             />
             <Button
                 className="Button"
                 variant="contained"
-                onClick={handleClick}>
-                Register
+                onClick={() => {
+                    login({
+                        email: email,
+                        password: password
+                    })
+                }}
+            >
+                Login
             </Button><br />
             <div>
                 <Link component={RouterLink} to={process.env.PUBLIC_URL + '/register'} underline="hover">
-                    {'Not registered yet? Create your own account!'}
+                    {'Not registered yet ? Create your own account!'}
                 </Link>
             </div>
         </div>
     );
 }
 
-const handleClick = () => {
-    console.log('Login component', 'Request for login');
-}
+const mapStateToProps = (state) => {
+    return {
+        loginState: state.login
+    };
+};
 
-export default Login;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        login: (user) => {
+            dispatch(loginAction(user));
+        }
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
