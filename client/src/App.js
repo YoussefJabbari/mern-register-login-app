@@ -7,7 +7,7 @@ import Register from './components/Register/Register';
 import RegistrationConfirmed from './components/Register/RegistrationConfirmed';
 import './App.css';
 
-function App() {
+const App = () => {
   return (
       <div className="App">
           <Router>

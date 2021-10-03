@@ -2,7 +2,6 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
 import { LOGIN_SUCCESS, LOGIN_ERROR } from '../../types';
-import setAuthToken from '../../../utils/setAuthToken';
 
 export const loginAction = (user) => {
     return async (dispatch) => {
@@ -12,11 +11,9 @@ export const loginAction = (user) => {
                 const { token } = res.data;
                 localStorage.setItem('jwtToken', token);
 
-                // Set token to Authorization header
-                setAuthToken(token);
-
                 // Decode token to get user data
                 const decoded = jwt_decode(token);
+                localStorage.setItem('userId', decoded.id);
                 localStorage.setItem('userName', decoded.name);
                 dispatch({ type: LOGIN_SUCCESS, payload: decoded });
             })

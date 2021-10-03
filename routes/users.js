@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
+const userController = require('../controllers/userController');
+const authenticated = require('../middlewares/authenticated');
+
 // Get users route
-router.get('/users', (req, res, next) => {
-    res.send('User list')
-});
+router.get('/user-list', authenticated, userController.getUserList);
 
 module.exports = router;

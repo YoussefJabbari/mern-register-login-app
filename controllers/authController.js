@@ -7,11 +7,19 @@ const keys = require('../config/keys');
 
 // Register request
 exports.register = (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, passwordConfirmation } = req.body;
 
     // Validation
-    if (!firstName || !lastName || !email || !password) {
+    if (!firstName || !lastName || !email || !password || !passwordConfirmation) {
         return res.status(400).json({ success: false, msg: 'REQUIRED_FIELDS' });
+    }
+
+    if (!email.includes('@')) {
+        return res.status(400).json({ success: false, msg: 'NOT_VALID_EMAIL' });
+    }
+
+    if (password !== passwordConfirmation) {
+        return res.status(400).json({ success: false, msg: 'PASSWORD_CONFIRMATION_FAILED' });
     }
 
     User.getUserByEmail(req.body.email, (err, user) => {
@@ -70,34 +78,39 @@ exports.login = (req, res) => {
             // Check user's existence
             return res.status(400).json({ success: false, msg: 'NOT_FOUND_ACCOUNT' });
         } else {
-            // Check password
-            bcrypt.compare(password, user.password).then(isMatch => {
-                if (isMatch) {
-                    // Create jwt Payload
-                    const jwtPayload = {
-                        id: user.id,
-                        name: user.firstName + ' ' + user.lastName
-                    };
+            // Check account if enabled
+            if (!user.enabled) {
+                return res.status(400).json({ success: false, msg: 'ACCOUNT_NOT_CONFIRMED' });
+            } else {
+                // Check password
+                bcrypt.compare(password, user.password).then(isMatch => {
+                    if (isMatch) {
+                        // Create jwt Payload
+                        const jwtPayload = {
+                            id: user.id,
+                            name: user.firstName + ' ' + user.lastName
+                        };
 
-                    // Sign token
-                    jwt.sign(
-                        jwtPayload,
-                        keys.secret,
-                        {
-                            expiresIn: 31556926
-                        },
-                        (err, token) => {
-                            res.json({
-                                success: true,
-                                token: 'Bearer ' + token
-                            });
-                        }
-                    );
-                } else {
-                    // Wrong password
-                    return res.status(400).json({ success: false, msg: 'WRONG_PASSWORD' });
-                }
-            });
+                        // Sign token
+                        jwt.sign(
+                            jwtPayload,
+                            keys.secret,
+                            {
+                                expiresIn: 31556926
+                            },
+                            (err, token) => {
+                                res.json({
+                                    success: true,
+                                    token: 'Bearer ' + token
+                                });
+                            }
+                        );
+                    } else {
+                        // Wrong password
+                        return res.status(400).json({ success: false, msg: 'WRONG_PASSWORD' });
+                    }
+                });
+            }
         }
     });
 };
