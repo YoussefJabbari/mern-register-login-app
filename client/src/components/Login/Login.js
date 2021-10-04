@@ -16,7 +16,7 @@ const Login = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    if (localStorage.getItem('jwtToken') && loginState.isAuthenticated) {
+    if (localStorage.getItem('jwtToken')) {
         return <Redirect to="/" />;
     }
 
